@@ -104,21 +104,20 @@ def softmax_regression_epoch(X, y, theta, lr = 0.1, batch=100):
         None
     """
     ### BEGIN YOUR CODE
-    row_num=X.shape[0]
-    random_row=np.random.choice(row_num, size=batch, replace=False)
-    X_input=X[random_row]
-    y_input=y[random_row]
-
-    num_examples=X_input.shape[0] # row
-    num_class=theta.shape[1] # col
-    m=X_input.shape[0]
-    Z=np.exp(np.transpose(theta)@X_input)/np.sum(np.exp(np.transpose(theta)@X_input),axis=0)
-    Iy=np.zeros((num_class,num_examples))
-    cols=np.arange(num_examples)
-    Iy[y_input,cols]=1
-    dt=np.transpose(X_input)@(Z-Iy)/m
-
-    theta=theta-dt
+    epochs=np.floor(X.shape[0]/batch)+1
+    for i in range(epochs):
+        row=np.arange(i*batch,(i+1)*batch)
+        X_input=X[row]
+        y_input=y[row]
+        num_examples=X_input.shape[0] # row
+        num_class=theta.shape[1] # col
+        m=X_input.shape[0]
+        Z=np.exp(X_input@theta)/np.sum(np.exp(X_input@theta),axis=1)
+        Iy=np.zeros((num_class,num_examples))
+        cols=np.arange(num_examples)
+        Iy[y_input,cols]=1
+        dt=np.transpose(X_input)@(Z-Iy)/m
+        theta=theta-dt
     ### END YOUR CODE
 
 
