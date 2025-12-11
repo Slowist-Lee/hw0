@@ -58,7 +58,7 @@ def parse_mnist(image_filename, label_filename):
     with gzip.open(label_filename,'rb') as f_label:
         label=f_label.read(8)
         _,num_label=struct.unpack('>2I', label)
-        label_data=f_image.read(num_label)
+        label_data=f_label.read(num_label)
         y = np.frombuffer(label_data, dtype=np.uint8)
     return (X,y)
     ### END YOUR CODE
