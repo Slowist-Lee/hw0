@@ -2,6 +2,7 @@
 #include <pybind11/numpy.h>
 #include <cmath>
 #include <iostream>
+#include <vector>
 
 namespace py = pybind11;
 
@@ -33,7 +34,55 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y,
      */
 
     /// BEGIN YOUR CODE
+    int epochs = m/batch+((m-batch*m/batch>0)?1:0);
+    int row_num;
+    for (int i=0;i<epochs;i++){
+        int x_start=i*n;
+        int num_example=((i+1)*batch>m?m:((i+1)*batch))-i*batch;
 
+        std::vector<std::vector<float>> data(num_example, std::vector<float>(k, 0));
+
+        std::vector<std::vector<float>> data_sum(num_example, std::vector<float>(1, 0));
+
+        std::vector<std::vector<int>> Iy(num_example, std::vector<int>(k, 0));//y:m, Iy:m*k 
+
+        for(int m_index=0;m_index<num_example;m_index++){
+            Iy[m_index*y[m_index]+y[m_index]]=1;
+        }
+
+        for(int m_index=0;m_index<num_example;m_index++){
+            data_sum[m_index]=0;
+            for(int k_index=0;k_index<k;k_index++){
+                data[m_index*k+k_index]=0;
+                for(int n_index=0;n_index<n;n_index++){
+                    data[m_index*k+k_index]+=X[x_start+m_index*n+n_index]*theta[n_index*k+k_index];
+                }
+                data[m_index*k+k_index]=std::exp(data[m_index*k+k_index]);//分子
+                data_sum[m_index]+=data[m_index*k+k_index];//分母
+            }
+        }
+
+        std::vector<std::vector<float>> Z(num_example, std::vector<float>(k, 0));
+
+        for(int m_index=0;m_index<num_example;m_index++){
+            for(int k_index=0;k_index<k;k_index++){
+                Z[m_index*k+k_index]=data[m_index*k+k_index]/data_sum[m_index];
+            }
+        }
+
+        std::vector<std::vector<float>> dt(n, std::vector<float>(k, 0));
+
+        for(int n_index=0;n_index<n;n_index++){
+            for(int k_index=0;k_index<k;k_index++){
+                dt[n_index*k+k_index]=0;
+                for(int m_index=0;m_index<num_example;m_index++){
+                    dt+=X[x_start+m_index*n+n_index]*(Z[m_index*k+k_index]-Iy[m_index*k+k_index])/m;
+                }
+                theta[n_index*k+k_index]=theta[n_index*k+k_index]-lr*dt[n_index*k+k_index];
+            }
+        }
+
+    };
     /// END YOUR CODE
 }
 
