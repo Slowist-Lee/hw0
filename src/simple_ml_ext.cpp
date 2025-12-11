@@ -40,9 +40,9 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y,
         int x_start=i*n;
         int num_example=((i+1)*batch>m?m:((i+1)*batch))-i*batch;
 
-        float* data = (int*)malloc(num_example * k * sizeof(float));
+        float* data = (float*)malloc(num_example * k * sizeof(float));
 
-        float* data_sum = (int*)malloc(num_example * 1 * sizeof(float));
+        float* data_sum = (float*)malloc(num_example * 1 * sizeof(float));
 
 
         int* Iy = (int*)malloc(num_example * k * sizeof(int));//y:m, Iy:m*k 
@@ -67,7 +67,7 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y,
             }
         }
 
-        float* Z = (int*)malloc(num_example * k * sizeof(float));
+        float* Z = (float*)malloc(num_example * k * sizeof(float));
 
         for (size_t i = 0; i < num_example * 1; ++i) {
             Z[i] = 0;
@@ -79,7 +79,7 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y,
             }
         }
 
-        float* dt = (int*)malloc(n * k * sizeof(float));
+        float* dt = (float*)malloc(n * k * sizeof(float));
 
         for(int n_index=0;n_index<n;n_index++){
             for(int k_index=0;k_index<k;k_index++){
