@@ -82,7 +82,7 @@ def softmax_loss(Z, y):
     ### BEGIN YOUR CODE
     zy=np.zeros(Z.shape)
     zy[y]=1
-    return np.mean(np.log(np.sum(np.exp(Z),axis=0))-zy,axis=0)
+    return np.mean(np.log(np.sum(np.exp(Z),axis=1))-zy,axis=0)
     ### END YOUR CODE
 
 
