@@ -2,7 +2,7 @@
 #include <pybind11/numpy.h>
 #include <cmath>
 #include <iostream>
-#include <vector>
+#include <cstdlib>
 
 namespace py = pybind11;
 
@@ -40,11 +40,16 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y,
         int x_start=i*n;
         int num_example=((i+1)*batch>m?m:((i+1)*batch))-i*batch;
 
-        std::vector<std::vector<float>> data(num_example, std::vector<float>(k, 0));
+        float* data = (int*)malloc(num_example * k * sizeof(float));
 
-        std::vector<std::vector<float>> data_sum(num_example, std::vector<float>(1, 0));
+        float* data_sum = (int*)malloc(num_example * 1 * sizeof(float));
 
-        std::vector<std::vector<int>> Iy(num_example, std::vector<int>(k, 0));//y:m, Iy:m*k 
+
+        int* Iy = (int*)malloc(num_example * k * sizeof(int));//y:m, Iy:m*k 
+
+        for (size_t i = 0; i < num_example * k; ++i) {
+            Iy[i] = 0;
+        }
 
         for(int m_index=0;m_index<num_example;m_index++){
             Iy[m_index*y[m_index]+y[m_index]]=1;
@@ -62,7 +67,11 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y,
             }
         }
 
-        std::vector<std::vector<float>> Z(num_example, std::vector<float>(k, 0));
+        float* Z = (int*)malloc(num_example * k * sizeof(float));
+
+        for (size_t i = 0; i < num_example * 1; ++i) {
+            Z[i] = 0;
+        }
 
         for(int m_index=0;m_index<num_example;m_index++){
             for(int k_index=0;k_index<k;k_index++){
@@ -70,7 +79,7 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y,
             }
         }
 
-        std::vector<std::vector<float>> dt(n, std::vector<float>(k, 0));
+        float* dt = (int*)malloc(n * k * sizeof(float));
 
         for(int n_index=0;n_index<n;n_index++){
             for(int k_index=0;k_index<k;k_index++){
